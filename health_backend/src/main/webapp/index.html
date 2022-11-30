@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>传智健康</title>
+    <meta name="description" content="传智健康">
+    <meta name="keywords" content="传智健康">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="plugins/elementui/index.css">
+    <link rel="stylesheet" href="css/login.css">
+    <!-- 引入组件库 -->
+    <script src="/js/vue.js"></script>
+    <script src="/plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script src="/js/axios.min.js"></script>
+</head>
+<body class="hold-transition skin-purple sidebar-mini">
+<div id="app">
+    <div class="login-container">
+        <div class="loginBox">
+            <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px"
+                     class="demo-ruleForm">
+                <el-form-item label="用户名" prop="username">
+                    <el-input v-model="ruleForm.username" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="pass">
+                    <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-button type="primary" @click="login('ruleForm')">登陆</el-button>
+                <el-button @click="register('ruleForm')">注册</el-button>
+            </el-form>
+            <!-- 新增标签弹层 -->
+            <div class="add-form">
+                <el-dialog title="注册" :visible.sync="dialogFormVisible">
+                    <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="用户名" prop="username">
+                                    <el-input v-model="formData.username"/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="密码" prop="password">
+                                    <el-input v-model="formData.password"/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="性别">
+                                    <el-select v-model="formData.gender">
+                                        <el-option label="不限" value="0"></el-option>
+                                        <el-option label="男" value="1"></el-option>
+                                        <el-option label="女" value="2"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="电话号码">
+                                    <el-input v-model="formData.telephone"/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="类型">
+                                    <el-select v-model="formData.type">
+                                        <el-option label="检查" value="1"></el-option>
+                                        <el-option label="检验" value="2"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="价格">
+                                    <el-input v-model="formData.price"/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="说明">
+                                    <el-input v-model="formData.remark" type="textarea"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible = false">取消</el-button>
+                        <el-button type="primary" @click="handleAdd()">确定</el-button>
+                    </div>
+                </el-dialog>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    let vue = new Vue({
+        el: '#app',
+        data: {
+            dialogFormVisible: false,//增加表单是否可见
+            ruleForm: {
+                username: '',
+                pass: ''
+            },
+            formData:{
+
+            },
+            rules: {//校验规则
+                username: [{required: true, message: '用户名为必填项', trigger: 'blur'}],
+                pass: [{required: true, message: '密码为必填项', trigger: 'blur'}]
+            },
+        },
+        methods: {
+            login() {
+                console.log('index.html')
+                axios.post("/login.do",this.ruleForm).then((res) => {
+                    console.log(res)
+                });
+            },
+            register() {
+                console.log('register')
+                axios.post("/user/add",this.formData).then((res) => {
+                    console.log(res)
+                });
+            }
+        }
+    });
+</script>
+</html>

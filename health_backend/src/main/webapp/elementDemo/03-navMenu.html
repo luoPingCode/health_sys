@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/vue@next"></script>
+<!--    <script src="//unpkg.com/@element-plus/icons-vue"></script>-->
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <!-- import JavaScript -->
+    <script src="https://unpkg.com/element-plus"></script>
+</head>
+<body>
+<div id="app">
+    <el-menu
+            active-text-color="#ffd04b"
+            background-color="#545c64"
+            class="el-menu-vertical-demo"
+            default-active="2"
+            text-color="#fff"
+            @open="handleOpen"
+            @close="handleClose"
+    >
+        <el-sub-menu index="1">
+            <template #title>
+                <el-icon><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" data-v-029747aa=""><path fill="currentColor" d="M715.648 625.152 670.4 579.904l90.496-90.56c75.008-74.944 85.12-186.368 22.656-248.896-62.528-62.464-173.952-52.352-248.96 22.656L444.16 353.6l-45.248-45.248 90.496-90.496c100.032-99.968 251.968-110.08 339.456-22.656 87.488 87.488 77.312 239.424-22.656 339.456l-90.496 90.496zm-90.496 90.496-90.496 90.496C434.624 906.112 282.688 916.224 195.2 828.8c-87.488-87.488-77.312-239.424 22.656-339.456l90.496-90.496 45.248 45.248-90.496 90.56c-75.008 74.944-85.12 186.368-22.656 248.896 62.528 62.464 173.952 52.352 248.96-22.656l90.496-90.496 45.248 45.248zm0-362.048 45.248 45.248L398.848 670.4 353.6 625.152 625.152 353.6z"></path></svg>
+                </el-icon>
+                <span>Navigator One</span>
+            </template>
+            <el-menu-item-group title="Group One">
+                <el-menu-item index="1-1">item one</el-menu-item>
+                <el-menu-item index="1-2">item two</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group title="Group Two">
+                <el-menu-item index="1-3">item three</el-menu-item>
+            </el-menu-item-group>
+            <el-sub-menu index="1-4">
+                <template #title>item four</template>
+                <el-menu-item index="1-4-1">item one</el-menu-item>
+            </el-sub-menu>
+        </el-sub-menu>
+        <el-menu-item index="2">
+            <el-icon><icon-menu /></el-icon>
+            <span>Navigator Two</span>
+        </el-menu-item>
+        <el-menu-item index="3" disabled>
+            <el-icon><document /></el-icon>
+            <span>Navigator Three</span>
+        </el-menu-item>
+        <el-menu-item index="4">
+            <el-icon><setting /></el-icon>
+            <span>Navigator Four</span>
+        </el-menu-item>
+    </el-menu>
+</div>
+</body>
+
+
+<script  setup>
+    const App = {
+        data() {
+            return {
+                message: "Hello Element Plus",
+            };
+        },
+    };
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app");
+</script>
+
+
+</html>

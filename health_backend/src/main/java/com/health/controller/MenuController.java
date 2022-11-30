@@ -69,6 +69,7 @@ public class MenuController {
             if (menuList != null && menuList.size() > 0) {
                 return new Result(false,MessageConstant.ADD_MENU_FAIL + "，菜单数据已存在");
             }
+
             menuService.addMenu(menu);
             log.info("id="+menu.getId());
             return new Result(true,MessageConstant.ADD_MENU_SUCCESS);

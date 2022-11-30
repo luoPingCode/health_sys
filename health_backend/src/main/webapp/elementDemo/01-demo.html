@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Import style -->
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css"/>
+    <!-- Import Vue 3 -->
+    <script src="//unpkg.com/vue@3"></script>
+    <!-- Import component library -->
+    <script src="//unpkg.com/element-plus"></script>
+</head>
+<body>
+<div id="app">
+    <el-container>
+        <el-aside width="200px">Aside</el-aside>
+        <el-container>
+            <el-header>Header</el-header>
+            <el-main>Main</el-main>
+            <el-footer>Footer</el-footer>
+        </el-container>
+    </el-container>
+</div>
+</body>
+<style>
+    .el-header, .el-footer {
+        background-color: #b8d1b3;
+        color: #333;
+        text-align: left;
+        line-height: 60px;
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        color: #333;
+        text-align: center;
+        line-height: 200px;
+    }
+
+    .el-main {
+        background-color: #E9EEF3;
+        color: #333;
+        text-align: center;
+        line-height: 590px;
+    }
+</style>
+<script>
+    const App = {};
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app");
+</script>
+</html>

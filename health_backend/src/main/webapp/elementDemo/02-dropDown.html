@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Import style -->
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css"/>
+    <!-- Import Vue 3 -->
+    <script src="//unpkg.com/vue@3"></script>
+    <!-- Import component library -->
+    <script src="//unpkg.com/element-plus"></script>
+</head>
+<body>
+<div id="app">
+    <div class="flex flex-wrap items-center">
+        <el-dropdown>
+            <el-button type="primary">
+                Dropdown List<el-icon class="el-icon-right"><arrow-down /></el-icon>
+            </el-button>
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item>Action 1</el-dropdown-item>
+                    <el-dropdown-item>Action 2</el-dropdown-item>
+                    <el-dropdown-item>Action 3</el-dropdown-item>
+                    <el-dropdown-item>Action 4</el-dropdown-item>
+                    <el-dropdown-item>Action 5</el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
+        <el-dropdown split-button type="primary" @click="handleClick">
+            Dropdown List
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item>Action 1</el-dropdown-item>
+                    <el-dropdown-item>Action 2</el-dropdown-item>
+                    <el-dropdown-item>Action 3</el-dropdown-item>
+                    <el-dropdown-item>Action 4</el-dropdown-item>
+                    <el-dropdown-item>Action 5</el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
+    </div>
+</div>
+</body>
+<style scoped>
+    .example-showcase .el-dropdown + .el-dropdown {
+        margin-left: 15px;
+    }
+    .example-showcase .el-dropdown-link {
+        cursor: pointer;
+        color: var(--el-color-primary);
+        display: flex;
+        align-items: center;
+    }
+</style>
+<script  setup>
+    // const App = {};
+    const app = Vue.createApp({});
+    app.use(ElementPlus);
+    app.mount("#app");
+    const handleClick = function(){// eslint-disable-next-line no-alert
+        alert('button click');
+    };
+
+</script>
+
+
+</html>

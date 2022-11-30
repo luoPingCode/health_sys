@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/vue@next"></script>
+<!--    <script src="//unpkg.com/@element-plus/icons-vue"></script>-->
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <!-- import JavaScript -->
+    <script src="https://unpkg.com/element-plus"></script>
+</head>
+<body>
+<div id="app">
+    <el-pagination background layout="prev, pager, next" :total="1000" @current-change="handleCurrentChange" />
+</div>
+</body>
+<script>
+    const ref = Vue.ref;
+    const reactive = Vue.reactive;
+    const toRefs = Vue.toRefs;
+    const ElMessage = ElementPlus.ElMessage
+
+
+    const App = {
+        setup(){
+            return{
+
+            }
+        },
+        methods:{
+            handleCurrentChange(page){
+                alert(page);
+            }
+        }
+    };
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app");
+
+
+
+
+
+
+
+
+</script>
+
+
+</html>
