@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.MemberDao">
+    <!--    注册会员-->
+    <insert id="addMember" parameterType="com.health.pojo.Member">
+        <!--通过mybatis框架提供的selectKey标签获得自增产生的ID值-->
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_member(fileNumber, name, sex, idCard, phoneNumber, regTime, password, email, birthday, remark,
+        healthmanager)
+        VALUES (#{fileNumber}, #{name}, #{sex}, #{idCard},#{phoneNumber}, #{regTime}, #{password}, #{email},
+        #{birthday}, #{remark}, #{healthmanager})
+    </insert>
+
+    <!--    根据电话获取会员id-->
+    <select id="getMemberByTelPhone" parameterType="string" resultType="com.health.pojo.Member">
+        select id,
+               fileNumber,
+               name,
+               sex,
+               idCard,
+               phoneNumber,
+               regTime,
+               password,
+               email,
+               birthday,
+               remark,
+               healthmanager
+        from t_member
+        where phoneNumber = #{telephone}
+    </select>
+    <!--    根据月份查询每月之前的会员数-->
+    <select id="getCountByMonth" resultType="java.lang.Integer">
+        select count(1)
+        from t_member
+        where regTime &lt; #{month}
+    </select>
+<!--    获取当天新增会员数-->
+    <select id="getCountByDay" resultType="java.lang.Integer">
+        select count(1) from t_member where regTime = #{today}
+    </select>
+<!--    获取所有会员-->
+    <select id="getCountAll" resultType="java.lang.Integer">
+        select count(1) from t_member
+    </select>
+<!--    获取本周\本月新增会员-->
+    <select id="getCountByThisWeek" resultType="java.lang.Integer">
+        select count(1) from t_member where regTime &gt;= #{thisWeekMonday}
+    </select>
+<!--    根据条件查询member-->
+    <select id="getMemberByCondition" resultType="com.health.pojo.Member">
+        select id,
+               fileNumber,
+               name,
+               sex,
+               idCard,
+               phoneNumber,
+               regTime,
+               password,
+               email,
+               birthday,
+               remark,
+               healthmanager
+        from t_member
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="healthmanager != null and healthmanager != ''">
+                and healthmanager = #{healthmanager}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.health.dao.OrderSettingDao">
+    <!--    添加预约设置-->
+    <insert id="save" parameterType="com.health.pojo.OrderSetting">
+        insert into t_ordersetting(orderDate, number, reservations)
+        values (#{orderDate}, #{number}, #{reservations})
+    </insert>
+    <!--    如果上传的表格中已经包含有则更新-->
+    <update id="update" parameterType="com.health.pojo.OrderSetting">
+        update t_ordersetting
+        set orderDate    = #{orderDate},
+            number       = #{number},
+            reservations = #{reservations}
+    </update>
+    <!--    根据日期设置可预约人数-->
+    <update id="updateOrderSetting" parameterType="com.health.pojo.OrderSetting">
+        update t_ordersetting
+        set number =#{number}
+        where orderDate = #{orderDate}
+    </update>
+    <!--    预约成功后，更新预约数-->
+    <update id="updateOrderSettingByDate" parameterType="com.health.pojo.OrderSetting">
+        update t_ordersetting
+        set reservations =#{reservations}
+        where orderDate = #{orderDate}
+    </update>
+    <!--    根据日期查询该天是否存在已设置的数据-->
+    <select id="findCountByOrderDate" parameterType="date" resultType="int">
+        select count(1)
+        from t_ordersetting
+        where orderDate = #{orderDate}
+    </select>
+    <!--    查询预约设置-->
+    <select id="queryOrderSetting" parameterType="string" resultType="com.health.pojo.OrderSetting">
+        select o.id, o.orderDate, o.reservations, o.number
+        from t_ordersetting o
+        where o.orderDate BETWEEN #{startDate} AND #{endDate}
+    </select>
+    <!--    根据日期查询预约设置，用户是否可以预约-->
+    <select id="findByOrderDate" parameterType="date" resultType="com.health.pojo.OrderSetting">
+        select o.id, o.orderDate, o.number, o.reservations
+        from t_ordersetting o
+        where o.orderDate = #{orderDate}
+    </select>
+</mapper>

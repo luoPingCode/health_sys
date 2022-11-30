@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.SetmealDao">
+    <!--    添加套餐-->
+    <insert id="addSetmeal" parameterType="com.health.pojo.Setmeal">
+        <!--通过mybatis框架提供的selectKey标签获得自增产生的ID值-->
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_setmeal(name, code, helpCode, sex, age, price, remark, attention, img)
+        VALUES (#{name},#{code} , #{helpCode}, #{sex}, #{age}, #{price},
+        #{remark}, #{attention}, #{img})
+    </insert>
+    <!--    添加检查组与套餐关联数据-->
+    <insert id="addSetmealAndCheckGroup" parameterType="map">
+        insert into t_setmeal_checkgroup(setmeal_id, checkgroup_id)
+        VALUES (#{setmeal_id}, #{checkgroup_id})
+    </insert>
+    <!--    查询套餐根据id，用于套餐修改-->
+    <select id="setMealfindById" parameterType="integer" resultMap="BaseResultMap">
+        select *
+        from t_setmeal
+        where id = #{id}
+    </select>
+    <!--    分页查询套餐，用于页面展示-->
+    <select id="findSerMeal" parameterType="string" resultType="com.health.pojo.Setmeal">
+        select * from t_setmeal
+        <if test="queryString != null and queryString.length > 0">
+            where name = #{queryString} or code = #{queryString} or helpCode = #{queryString}
+        </if>
+    </select>
+    <!--    查询套餐总数-->
+    <select id="findCount" resultType="java.lang.Long">
+        select count(*)
+        from t_setmeal
+    </select>
+    <!--    查询所有套餐数据-->
+    <select id="queryAll" resultType="com.health.pojo.Setmeal">
+        select *
+        from t_setmeal
+    </select>
+    <!--    映射，进行多对多查询-->
+    <resultMap id="BaseResultMap" type="com.health.pojo.Setmeal">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="age" property="age"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="price" property="price"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <result column="img" property="img"/>
+    </resultMap>
+    <!--    映射套餐所关联的检查组-->
+    <resultMap id="findByIdResultMap" type="com.health.pojo.Setmeal" extends="BaseResultMap">
+        <collection property="checkGroups"
+                    column="id"
+                    ofType="com.health.pojo.CheckGroup"
+                    select="com.health.dao.CheckGroupDao.queryCheckGroupById">
+        </collection>
+    </resultMap>
+
+    <!--    根据id查询套餐详情-->
+    <select id="findById" parameterType="integer" resultMap="findByIdResultMap">
+        select *
+        from t_setmeal
+        where id = #{id}
+    </select>
+    <!--    查询套餐与检查组关联信息-->
+    <select id="findCheckGroupIdsById" resultType="int" parameterType="int">
+        select checkgroup_id
+        from t_setmeal_checkgroup
+        where setmeal_id = #{id}
+    </select>
+    <!--    套餐预约统计-->
+    <select id="getSetmealReport" resultType="java.util.Map">
+        SELECT s.name, count(o.id) as value
+        from t_setmeal s,
+             t_order o
+        WHERE s.id = o.setmeal_id
+        GROUP BY s.name
+    </select>
+    <!--    查询热门套餐-->
+    <select id="getHotSetmeal" resultType="java.util.Map">
+        SELECT s.name,
+               count(o.id) as setmeal_count,
+               count(o.id) / (SELECT SUM(1)
+                              FROM t_setmeal s,
+                                   t_order o
+                              WHERE s.id = o.setmeal_id)  * 100 AS proportion
+        from t_setmeal s,
+             t_order o
+        WHERE s.id = o.setmeal_id
+        GROUP BY s.name
+        ORDER BY setmeal_count desc
+        LIMIT 0,3
+    </select>
+    <!--    修改套餐-->
+    <update id="updateSetmeal">
+        update t_setmeal
+        set name=#{name},
+            code = #{code},
+            age = #{age},
+            helpCode = #{helpCode},
+            sex = #{sex},
+            price = #{price},
+            remark = #{remark},
+            attention = #{attention},
+            img = #{img}
+        where id = #{id}
+    </update>
+    <!--    根据id清空关联表数据-->
+    <delete id="clear" parameterType="integer">
+        delete
+        from t_setmeal_checkgroup
+        where setmeal_id = #{id}
+    </delete>
+
+</mapper>

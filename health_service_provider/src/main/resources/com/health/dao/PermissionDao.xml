@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.PermissionDao">
+
+    <resultMap id="BaseResultMap" type="com.health.pojo.Permission">
+        <!--@Table t_permission-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="keyword" column="keyword" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="cretime" column="cretime" jdbcType="TIMESTAMP"/>
+        <result property="station" column="station" jdbcType="VARCHAR"/>
+    </resultMap>
+<!--    根据角色id获取角色权限-->
+<!--    <resultMap id="findPermissionRoleMap" -->
+<!--               type="com.health.pojo.Permission" -->
+<!--               extends="BaseResultMap">-->
+<!--        <collection property=""-->
+<!--    </resultMap>-->
+    <select id="findPermissionByRoleId" parameterType="integer" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_permission
+        WHERE id IN (SELECT permission_id from t_role_permission WHERE role_id = #{id})
+    </select>
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, name, keyword, description, cretime, station
+        from t_permission
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryByPage" parameterType="string" resultType="com.health.pojo.Permission">
+        select
+          id, name, keyword, description, cretime, station
+        from t_permission
+        <if test="queryString != null and queryString.length > 0">
+           where name = #{queryString}
+        </if>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, name, keyword, description, cretime, station
+        from health.t_permission
+    </select>
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from t_permission
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                and keyword = #{keyword}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="cretime != null">
+                and cretime = #{cretime}
+            </if>
+            <if test="station != null and station != ''">
+                and station = #{station}
+            </if>
+        </where>
+    </select>
+<!--    根据权限id获取角色-->
+    <select id="findRoleByPmId" resultType="com.health.pojo.Role">
+        select id, name, keyword, description from t_role WHERE id in (select role_id from t_role_permission where permission_id = #{id})
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into t_permission(name, keyword, description, cretime, station)
+        values (#{name}, #{keyword}, #{description}, #{cretime}, #{station})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into t_permission(name, keyword, description, cretime, station)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.name}, #{entity.keyword}, #{entity.description}, #{entity.cretime}, #{entity.station})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into t_permission(name, keyword, description, cretime, station)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.keyword}, #{entity.description}, #{entity.cretime}, #{entity.station})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        keyword = values(keyword),
+        description = values(description),
+        cretime = values(cretime),
+        station = values(station)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update t_permission
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="keyword != null and keyword != ''">
+                keyword = #{keyword},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="cretime != null">
+                cretime = #{cretime},
+            </if>
+            <if test="station != null and station != ''">
+                station = #{station},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from t_permission where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.health.dao.OrderDao">
+    <!--    进行预约-->
+    <insert id="addOrder" parameterType="com.health.pojo.Order">
+        <!--通过mybatis框架提供的selectKey标签获得自增产生的ID值-->
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_order(member_id, orderDate, orderType, orderStatus, setmeal_id)
+        values (#{memberId}, #{orderDate}, #{orderType}, #{orderStatus}, #{setmealId})
+    </insert>
+    <!--    根据会员id查询预约信息，判断是否已进行预约-->
+    <select id="getOrderByMemberId" parameterType="string" resultType="com.health.pojo.Order">
+        select id,
+               member_id,
+               orderDate,
+               orderType,
+               orderStatus,
+               setmeal_id,
+               food,
+               sport,
+               healthName,
+               suggestion,
+               address_id
+        from t_order o
+        where o.member_id = #{memberId}
+    </select>
+    <!--    查询预约信息-->
+    <select id="getOrderById" parameterType="int" resultType="map">
+        select m.name member, s.name setmeal, o.orderDate, o.orderType
+        from t_order o,
+             t_member m,
+             t_setmeal s
+        where o.member_id = m.id
+          and o.setmeal_id = s.id
+          and o.id = #{id}
+    </select>
+    <!--    获取某日预约运营数-->
+    <select id="getCountByDay" parameterType="string" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_order
+        WHERE orderDate = #{today}
+          <if test="orderStatus != null">
+              AND orderStatus = #{orderStatus}
+          </if>
+    </select>
+<!--    获取某星期预约运营数-->
+    <select id="getCountByThisWeek" parameterType="string" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_order
+        WHERE orderDate &gt;= #{thisWeekMonday}
+        <if test="orderStatus != null">
+            AND orderStatus = #{orderStatus}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.RoleDao">
+
+    <resultMap id="BaseResultMap" type="com.health.pojo.Role">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="keyword" column="keyword" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+    </resultMap>
+<!--根据用户id获取用户角色-->
+    <resultMap id="findRolesMap"
+               type="com.health.pojo.Role"
+               extends="BaseResultMap">
+        <collection property="permissions"
+                    column="id"
+                    ofType="com.health.pojo.Permission"
+                    select="com.health.dao.PermissionDao.findPermissionByRoleId">
+        </collection>
+    </resultMap>
+<!--    根据用户id获取角色-->
+    <select id="findUserAndRole" parameterType="integer" resultMap="findRolesMap">
+        SELECT id, name, keyword, description
+        FROM t_role
+        WHERE id IN (SELECT role_id from t_user_role WHERE user_id = #{id})
+    </select>
+    <!--    获取所有角色信息-->
+    <select id="findAllRoles" resultMap="BaseResultMap">
+        select r.id, r.name, r.description, r.keyword
+        from t_role r
+    </select>
+<!--    根据菜单id获取角色-->
+    <select id="getRoleById" resultMap="BaseResultMap">
+        select r.id, r.name, r.description, r.keyword
+        from t_role r
+        where r.id in (SELECT role_id from t_role_menu where menu_id = #{id})
+    </select>
+    <!--    修改用户角色关联表-->
+    <insert id="addUserAndRole">
+        insert into t_user_role(user_id, role_id)
+        VALUES (#{userId}, #{roleId})
+    </insert>
+
+</mapper>

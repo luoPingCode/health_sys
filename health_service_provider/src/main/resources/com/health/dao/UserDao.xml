@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.UserDao">
+    <resultMap id="BaseResultMap" type="com.health.pojo.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result property="password" column="password"/>
+        <result property="remark" column="remark"/>
+        <result property="birthday" column="birthday"/>
+        <result property="gender" column="gender"/>
+        <result property="telephone" column="telephone"/>
+        <result property="station" column="station"/>
+    </resultMap>
+    <resultMap id="findByUsernameMap" extends="BaseResultMap" type="com.health.pojo.User">
+        <collection property="roles"
+                    ofType="com.health.pojo.Role"
+                    column="id"
+                    select="com.health.dao.RoleDao.findUserAndRole">
+            <!--            <id property="id" column="id"/>-->
+            <!--            <result property="name" column="name"/>-->
+            <!--            <result property="description" column="description"/>-->
+            <!--            <result property="keyword" column="keyword"/>-->
+            <!--            <collection ofType="com.health.pojo.Permission" property="permissions">-->
+            <!--                <id property="id" column="id"/>-->
+            <!--                <result property="name" column="name"/>-->
+            <!--                <result property="description" column="description"/>-->
+            <!--                <result property="keyword" column="keyword"/>-->
+            <!--                <result property="station" column="station"/>-->
+            <!--                <result property="cretime" column="cretime"/>-->
+            <!--            </collection>-->
+        </collection>
+    </resultMap>
+<!--    清空用户角色关联表-->
+    <delete id="clear" parameterType="integer">
+        delete from t_user_role where user_id = #{id}
+    </delete>
+<!--    删除用户-->
+    <delete id="deleteUser" parameterType="integer">
+        delete from t_user where id = #{id}
+    </delete>
+    <!--    根据名字获取用户角色权限-->
+    <select id="findByUsername" parameterType="string" resultMap="findByUsernameMap">
+        select u.id,
+               u.birthday,
+               u.gender,
+               u.username,
+               u.password,
+               u.remark,
+               u.station,
+               u.telephone
+        from t_user u
+        where u.username = #{username}
+    </select>
+    <insert id="addUser">
+        <!--通过mybatis框架提供的selectKey标签获得自增产生的ID值-->
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user(birthday, gender, username, password, remark, station, telephone) VALUES (#{birthday},
+        #{gender}, #{username},#{password}, #{remark}, #{station}, #{telephone})
+    </insert>
+    <!--    分页查询用户信息-->
+    <select id="findPageUser" resultMap="BaseResultMap">
+        select id, birthday, gender, username, password, remark, station, telephone from t_user
+        <if test="queryString != null and queryString.length >0">
+            where username = #{queryString}
+        </if>
+    </select>
+<!--    根据id查询用户信息-->
+    <select id="findUserById" parameterType="integer" resultType="com.health.pojo.User">
+        select id, birthday, gender, username, password, remark, station, telephone from t_user where id = #{id}
+    </select>
+<!--    根据用户id查询角色-->
+    <select id="findRoleById" parameterType="integer" resultType="integer">
+        select role_id from t_user_role WHERE user_id = #{id}
+    </select>
+    <!--    修改用户信息-->
+    <update id="updateUser" parameterType="com.health.pojo.User">
+        update t_user u
+        set u.username  = #{username},
+            u.password  = #{password},
+            u.gender    = #{gender},
+            u.birthday  = #{birthday},
+            u.remark    = #{remark},
+            u.station   = #{station},
+            u.telephone = #{telephone}
+        where u.id = #{id}
+    </update>
+    <update id="updatePassword" parameterType="com.health.pojo.User">
+        update t_user u
+        set u.password = #{password}
+        where u.id = #{id}
+    </update>
+</mapper>
