@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0,user-scalable=no,minimal-ui">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../img/asset-favico.ico">
+    <title>编辑信息</title>
+    <link rel="stylesheet" href="../css/page-health-orderInfo.css"/>
+    <link rel="stylesheet" href="../plugins/elementui/index.css"/>
+    <script src="../plugins/jquery/dist/jquery.min.js"></script>
+    <script src="../plugins/healthmobile.js"></script>
+    <script src="../plugins/datapicker/datePicker.js"></script>
+    <script src="../plugins/vue/vue.js"></script>
+    <script src="../plugins/vue/axios.min.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script>
+        var id = getUrlParam("id");
+    </script>
+    <script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=98XNslGfUeI2OoqQTAn7m6oy2BVgVDdQ"></script>
+</head>
+<body data-spy="scroll" data-target="#myNavbar" data-offset="150">
+<div id="app" class="app">
+    <!-- 页面头部 -->
+    <div class="top-header">
+        <span class="f-left"><i class="icon-back" onclick="history.go(-1)"></i></span>
+        <span class="center">传智健康</span>
+        <span class="f-right"><i class="icon-more"></i></span>
+    </div>
+    <!-- 页面内容 -->
+    <div class="contentBox">
+        <div class="card">
+            <div class="">
+                <img :src="'http://rkinwyat0.hn-bkt.clouddn.com/'+setmeal.img" width="100%" height="100%"/>
+            </div>
+            <div class="project-text">
+                <h4 class="tit">{{setmeal.name}}</h4>
+                <p class="subtit">{{setmeal.remark}}</p>
+                <p class="keywords">
+                    <span>{{setmeal.sex == '0' ? '性别不限' : setmeal.sex == '1' ? '男':'女'}}</span>
+                    <span>{{setmeal.age}}</span>
+                </p>
+            </div>
+            <div class="project-know">
+                <a href="orderNotice.html" class="link-page">
+                    <i class="icon-ask-circle"><span class="path1"></span><span class="path2"></span></i>
+                    <span class="word">预约须知</span>
+                    <span class="arrow"><i class="icon-rit-arrow"></i></span>
+                </a>
+            </div>
+        </div>
+        <div class="form-info">
+            <div class="info-title">
+                <span class="name">体检人信息</span>
+            </div>
+            <form class="info-form">
+                <div class="input-row">
+                    <label>体检人</label>
+                    <input v-model="orderInfo.name" type="text" class="input-clear" placeholder="请输入姓名">
+                </div>
+                <div class="input-row single-radio">
+                    <label class="radio-title">性别</label>
+                    <div class="radio-list">
+                        <div class="radio">
+                            <input v-model="orderInfo.sex" id="item1" type="radio" name="sex" value="1" checked>
+                            <label for="item1"></label>
+                            <span>男</span>
+                        </div>
+                        <div class="radio">
+                            <input v-model="orderInfo.sex" id="item2" type="radio" name="sex" value="2">
+                            <label for="item2"></label>
+                            <span>女</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>手机号</label>
+                    <input v-model="orderInfo.telephone" type="text" class="input-clear" placeholder="请输入手机号" >
+                    <input style="font-size: x-small;" id="validateCodeButton" @click="sendValidateCode()" type="button"
+                           value="发送验证码">
+                </div>
+                <div class="input-row">
+                    <label>验证码</label>
+                    <input v-model="orderInfo.validateCode" type="text" class="input-clear" placeholder="请输入验证码">
+                </div>
+                <div class="input-row">
+                    <label>身份证号</label>
+                    <input v-model="orderInfo.idCard" type="text" class="input-clear" placeholder="请输入身份证号">
+                </div>
+<!--                <div class="input-row">-->
+<!--                    <label>预约地址</label>-->
+<!--                    <el-select v-model="orderInfo.addressId" placeholder="请选择地址" prop="addressId">-->
+<!--                        <el-option-->
+<!--                                v-for="item in address"-->
+<!--                                :key="item.id"-->
+<!--                                :label="item.addressName"-->
+<!--                                :value="item.id">-->
+<!--                        </el-option>-->
+<!--                    </el-select>-->
+<!--                    <el-button type="primary" round @click="findMap()" icon="el-icon-location">-->
+<!--                        查看地图定位-->
+<!--                    </el-button>-->
+<!--                </div>-->
+<!--                <div class="input-row" style="display: none" id="showMap">-->
+<!--                    <div style="display: none;width: 100%;height: 340px" id="map"></div>-->
+<!--                </div>-->
+                <div class="date">
+                    <label>体检日期</label>
+                    <i class="icon-date" class="picktime"></i>
+                    <input v-model="orderInfo.orderDate" type="text" class="picktime" readonly>
+                </div>
+            </form>
+            <div class="box-button">
+                <button @click="submitOrder()" type="button" class="btn order-btn">提交预约</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    let vue = new Vue({
+        el: '#app',
+        data: {
+            setmeal: {},//套餐信息
+            orderInfo: {
+                setmealId: id,
+                sex: '1'
+            },
+            lng: 117.28269909,
+            lat: 31.86694226,
+            orderAddress: {},
+            address: [],
+            addressLngAndLat: [],
+            //预约信息
+            //如果设置套餐的时候没有选择图片，那么pictureName的值为默认显示的图片
+            // pictureName: "nopicture.jpg",
+            //用于前端显示的临时电话号码
+            tempPhoneNumber: "",
+            // tempName: ""
+        },
+        methods: {
+            //发送验证码
+            sendValidateCode() {
+                //获取用户输入的手机号(输入框中的双向绑定)
+                let telephone = this.orderInfo.telephone;
+                //校验手机号输入是否正确
+                if (!checkTelephone(telephone)) {
+                    this.$message.error('请输入正确的手机号');
+                    return false;
+                }
+                //校验通过
+                //id选择器，得到的是一个数组
+                validateCodeButton = $("#validateCodeButton")[0];
+                clock = window.setInterval(doLoop, 1000); //一秒执行一次
+                axios.post("/validateCode/send4Order?telephone=" +
+                    telephone).then((response) => {
+                    if (!response.data.flag) {
+                        //验证码发送失败
+                        this.$message.error('验证码发送失败，请检查手机号输入是否正确');
+                    }
+                });
+            },
+            //提交预约
+            submitOrder() {
+                //校验身份证号格式
+                if (!checkIdCard(this.orderInfo.idCard)) {
+                    this.$message.error('身份证号码输入错误，请重新输入');
+                    return;
+                }
+                //向后端提交数据
+                axios.post("/order/submit", this.orderInfo).then((response) => {
+                    if (response.data.flag) {
+                        //预约成功，跳转到预约成功页面
+                        window.location.href = "orderSuccess.html?orderId=" + response.data.data;
+                    } else {
+                        //预约失败，提示预约失败信息
+                        this.$message.error(response.data.message);
+                    }
+                });
+            },
+            findMap() {
+                if (this.orderInfo.addressId == null) {
+                    /*this.$message.error("请选择体检机构");
+                    return;*/
+                    $("#showMap").show();    //包含地图的div快展示
+                    $("#map").show();    //显示地图
+
+                    //百度地图api,创建地图
+                    let map = new BMap.Map("map");
+                    let point = new BMap.Point(this.lng, this.lat);
+                    map.centerAndZoom(point, 13);
+                    map.enableScrollWheelZoom(true);
+
+                    //记录机构的坐标数组
+                    var adds = new Array(this.address.length);
+
+                    for (var i = 0; i < this.address.length; i++) {
+                        let lng = this.address[i].lngAndLat.split(",")[0];
+                        let lat = this.address[i].lngAndLat.split(",")[1];
+
+                        adds[i] = new BMap.Point(lng, lat);
+                    }
+
+                    for (var i = 0; i < adds.length; i++) {
+                        var marker = new BMap.Marker(adds[i]);
+                        map.addOverlay(marker);
+                        marker.setLabel(new BMap.Label((i + 1) + ":" + this.address[i].addressName, {offset: new BMap.Size(20, -10)}));
+                    }
+                } else {
+                    $("#showMap").show();    //包含地图的div快展示
+                    $("#map").show();    //显示地图
+
+                    axios.get("/address/findByAddressId.do?addressId=" + this.orderInfo.addressId).then(res => {
+                        if (res.data.flag) {
+                            //获取经纬度
+                            this.lng = res.data.data.lngAndLat.split(",")[0];
+                            this.lat = res.data.data.lngAndLat.split(",")[1];
+                            this.orderAddress = res.data.data;
+                            //百度地图api,创建地图
+                            var map = new BMap.Map("map");
+                            var point = new BMap.Point(this.lng, this.lat);
+                            map.centerAndZoom(point, 13);
+                            map.enableScrollWheelZoom(true);
+                            //记录选择的机构地址经纬度
+                            this.addressLngAndLat = new Array(1);
+                            this.addressLngAndLat[0] = new BMap.Point(this.lng, this.lat);
+                            //创建对应经纬度的标记
+                            var mark = new BMap.Marker(this.addressLngAndLat[0]);
+                            map.addOverlay(mark);
+                            mark.setLabel(new BMap.Label(this.orderAddress.addressName, {offset: new BMap.Size(20, -10)}));
+                        } else {
+                            //查询失败，提示信息
+                            this.$message.error(res.data.message);
+                        }
+                    })
+                }
+            }
+
+        },
+        //初始化
+        mounted() {
+            // 预约页面回显
+            axios.get("/setMeal/findById?id=" + id).then((response) => {
+                if (response.data.flag) {
+                    this.setmeal = response.data.data;
+                }
+                // this.orderInfo.telephone = response.data.data.phoneNumber;
+
+                //处理返回的电话号码
+                // if (this.orderInfo.telephone != null && this.orderInfo.telephone.length > 0) {
+                //     //把后端返回的电话号码赋值给一个临时变量，防止把回显的数据给改了
+                //     let s = "";
+                //     s = s + this.orderInfo.telephone;
+                //     //对电话号码进行隐藏处理
+                //     this.tempPhoneNumber = s.substr(0, 3) + "****" + s.substr(s.length - 4, s.length - 1);
+                // }
+
+                //对姓名的显示做优化处理
+                // if (response.data.data.memberName != null && response.data.data.memberName.length > 0) {
+                //     this.orderInfo.name = response.data.data.memberName;
+                //     this.tempName=response.data.data.memberName;
+                // }
+
+                // let tempPictureName = response.data.data.setmeal.img;
+                // //如果原套餐中存储了图片
+                // if (tempPictureName != null && tempPictureName.length !== 0) {
+                //     //把显示的图片替换为套餐中设置的图片
+                //     this.pictureName = tempPictureName;
+                // }
+            });
+
+            //发送ajax请求,获取所有机构详细信息
+            axios.get("/address/findAllAddress").then(res => {
+                if (res.data.flag) {
+                    this.address = res.data.data;
+                } else {
+                    //查询失败，提示信息
+                    this.$message.error(res.data.message);
+                }
+            })
+        }
+    });
+</script>
+<script>
+    //日期控件
+    //datePicker是日期控件提供的
+    var calendar = new datePicker();
+    calendar.init({
+        'trigger': '.picktime',/*按钮选择器，用于触发弹出插件*/
+        'type': 'date',/*模式：date日期；datetime日期时间；time时间；ym年月；*/
+        'minDate': getSpecifiedDate(new Date(), 1),/*最小日期*/
+        'maxDate': getSpecifiedDate(new Date(), 30),/*最大日期*/
+        'onSubmit': function () { /*确认时触发事件*/
+            //var theSelectData = calendar.value;
+        },
+        'onClose': function () { /*取消时触发事件*/
+        }
+    });
+</script>
+</body>
+</html>
