@@ -13,12 +13,12 @@
         <module name="health_interface" />
         <module name="health_backend" />
         <module name="health_common" />
-        <module name="springsecurityDemo" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="12">
       <module name="quartzDemo" target="1.5" />
       <module name="springSecurityDemo" target="1.5" />
+      <module name="springsecurityDemo" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
