@@ -14,14 +14,14 @@ import com.aliyuncs.profile.IClientProfile;
  * 短信发送工具类
  */
 public class SMSUtils {
-	public static final String VALIDATE_CODE = "SMS_154950909";//发送短信验证码
+	public static final String VALIDATE_CODE = "";//发送短信验证码
 	public static final String ORDER_NOTICE = "填写你的";//体检预约成功通知
 	// 初始化ascClient需要的几个参数
 	public static final String product = "Dysmsapi";// 短信API产品名称（短信产品名固定，无需修改）
 	public static final String domain = "dysmsapi.aliyuncs.com";// 短信API产品域名（接口地址固定，无需修改）
 	// 替换成你的AK
-	public static final String accessKeyId = "LTAI5tGYxsMAL5oqFnVX9nz4";// 你的accessKeyId,参考本文档步骤2
-	public static final String accessKeySecret = "rzJKp7LRknZUESQJARAMffIfItJM4s";// 你的accessKeySecret，参考本文档步骤2
+	public static final String accessKeyId = "";// 你的accessKeyId,参考本文档步骤2
+	public static final String accessKeySecret = "";// 你的accessKeySecret，参考本文档步骤2
 
 	/**
 	 * 发送短信
