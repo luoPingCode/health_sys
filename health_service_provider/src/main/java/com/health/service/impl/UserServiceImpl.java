@@ -5,12 +5,14 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.health.constant.MessageConstant;
 import com.health.dao.MemberDao;
+import com.health.dao.MenuDao;
 import com.health.dao.RoleDao;
 import com.health.dao.UserDao;
 import com.health.entity.PageResult;
 import com.health.entity.QueryPageBean;
 import com.health.entity.Result;
 import com.health.pojo.Member;
+import com.health.pojo.Menu;
 import com.health.pojo.Role;
 import com.health.pojo.User;
 import com.health.service.UserService;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -38,6 +41,8 @@ public class UserServiceImpl implements UserService {
     RoleDao roleDao;
     @Autowired
     MemberDao memberDao;//注入会员
+    @Autowired
+    MenuDao menuDao;
 
 
 
@@ -186,6 +191,26 @@ public class UserServiceImpl implements UserService {
         userDao.deleteUser(id);
         return true;
     }
+
+    /**
+     * 获取登陆者的菜单权限
+     * @param id
+     * @return
+     */
+    @Override
+    public LinkedHashSet<Menu> getAllMenus(Integer id) {
+        //获取一级菜单
+        LinkedHashSet<Menu> menus = menuDao.getAllMenus(id);
+        if (menus != null && menus.size() > 0) {
+            for (Menu menu : menus) {
+                List<Menu> menuChildren = menuDao.getChildren(menu.getId());
+                menu.setChildren(menuChildren);
+            }
+        }
+        log.info("menus="+menus);
+        return menus;
+    }
+
     /**
      * 提取的新增用户或编辑用户插入用户角色关联数据
      *

@@ -3,9 +3,11 @@ package com.health.service;
 import com.health.entity.PageResult;
 import com.health.entity.QueryPageBean;
 import com.health.entity.Result;
+import com.health.pojo.Menu;
 import com.health.pojo.Role;
 import com.health.pojo.User;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -32,4 +34,6 @@ public interface UserService {
     void updateUser(User user, Integer[] roleId);
 
     Boolean deleteUser(Integer id, String username);
+
+    LinkedHashSet<Menu> getAllMenus(Integer id);
 }

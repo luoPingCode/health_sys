@@ -5,6 +5,7 @@ import com.health.pojo.Menu;
 import com.health.pojo.Role;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -28,5 +29,11 @@ public interface MenuDao {
 
     void deleteById(Integer id);
 
-    int getChildren(@Param("id") Integer id);
+    List<Menu> getChildren(@Param("id") Integer id);
+
+    Menu queryById(Integer id);
+//    修改菜单
+    void update(Menu menu);
+
+    LinkedHashSet<Menu> getAllMenus(@Param("id") Integer id);
 }

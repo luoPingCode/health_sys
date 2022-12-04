@@ -2,6 +2,7 @@ package com.health.service;
 
 import com.health.entity.PageResult;
 import com.health.entity.QueryPageBean;
+import com.health.entity.Result;
 import com.health.pojo.Menu;
 import com.health.pojo.Role;
 
@@ -28,5 +29,9 @@ public interface MenuService {
 
     void deleteMenu(Integer id);
 
-    int getChildren(Integer id);
+    List<Menu> getChildren(Integer id);
+
+    Menu getMenuById(Integer id);
+
+    Result edit(Menu menu);
 }

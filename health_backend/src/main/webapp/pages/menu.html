@@ -168,7 +168,7 @@
                 <el-dialog title="编辑菜单" :visible.sync="dialogFormVisible4Edit">
                     <template>
                         <el-form label-position="right" label-width="100px"
-                                 ref="dataAddForm" :model="editFormData"
+                                 ref="dataEditForm" :model="editFormData"
                                  :rules="rules">
                             <el-row>
                                 <el-col :span="12">
@@ -229,7 +229,6 @@
                                 </el-col>
                             </el-row>
                         </el-form>
-
                     </template>
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="dialogFormVisible4Edit = false">取消</el-button>
@@ -316,7 +315,7 @@
                         this.$message.error(res.data.message);
                     }
                 });
-                this.$refs['dataAddForm'].clearValidate();//清除表格的校验提示
+                // this.$refs['dataAddForm'].clearValidate();//清除表格的校验提示
             },
             //添加
             handleAdd: function () {
@@ -357,7 +356,6 @@
                 this.deepCloneObj = this.deepClone(row);
                 //这里可以不写
                 this.formDataChange = false;
-
                 //查询所有的关联菜单名称
                 axios.get("/menu/findAllMenu").then((res) => {
                     if (res.data.flag) {
@@ -366,10 +364,11 @@
                         this.$message.error(res.data.message);
                     }
                 });
-                this.$refs['dataAddForm'].clearValidate();//清除表格的校验提示
+                // this.$refs['dataEditForm'].clearValidate();//清除表格的校验提示
             },
             //编辑
             handleEdit() {
+                // console.log(this.editFormData);
                 //判断数据有没有发生改变，watch中调用方法 判断两者是否完全相等
                 if (!this.formDataChange) {
                     this.$message("数据没有改变");
@@ -377,23 +376,42 @@
                 }
                 //表单校验
                 //注意：注意：ajax都是异步操作，所以findPage方法要放finally里面
-                this.$refs['dataAddForm'].validate((valid) => {
+                this.$refs['dataEditForm'].validate((valid) => {
                     if (valid) {
-                        //axios发生ajax请求
-                        axios.post("/menu/edit", this.editFormData).then((res) => {
+                        axios.get("/menu/findRoleById?id=" + this.editFormData.id).then((res) => {
                             if (res.data.flag) {
-                                this.$message.success(res.data.message);
+                                this.$confirm(res.data.message + ', 是否继续?', '提示', {
+                                    confirmButtonText: '确定',
+                                    cancelButtonText: '取消',
+                                    type: 'warning'
+                                }).then(() => {
+                                    this.editMenu();
+                                }).catch(() => {
+                                    this.$message.info("已取消删除")
+                                });
                             } else {
-                                this.$message.error(res.data.message);
+                                this.editMenu();
                             }
-                        }).finally(() => {//不管成功与失败都要进行查询
-                            this.findPage();
-                            this.dialogFormVisible4Edit = false;
-                        })
+                        });
                     } else {
                         this.$message.error("表单数据校验失败");
                     }
                 });
+            },
+            //编辑菜单
+            editMenu(){
+                console.log("111")
+                //axios发生ajax请求
+                axios.put("/menu/edit", this.editFormData).then((res) => {
+                    if (res.data.flag) {
+                        this.$message.success(res.data.message);
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).finally(() => {//不管成功与失败都要进行查询
+                    this.findPage();
+                    this.dialogFormVisible4Edit = false;
+                })
             },
             // 删除
             handleDelete(row) {
@@ -423,7 +441,7 @@
             },
             //删除菜单
             deletemenu(row) {
-                axios.get("/menu/deleteMenu?id=" + row.id).then((res) => {
+                axios.delete("/menu/deleteMenu?id=" + row.id).then((res) => {
                     if (res.data.flag) {
                         this.$message.success(res.data.message)
                     } else {

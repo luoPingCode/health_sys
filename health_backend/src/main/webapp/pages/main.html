@@ -10,12 +10,6 @@
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
     <!-- 引入样式 -->
     <link rel="stylesheet" href="../plugins/elementui/index.css">
-    <!--    &lt;!&ndash; Import style &ndash;&gt;-->
-    <!--    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />-->
-    <!--    &lt;!&ndash; Import Vue 3 &ndash;&gt;-->
-    <!--    <script src="//unpkg.com/vue@3"></script>-->
-    <!--    &lt;!&ndash; Import component library &ndash;&gt;-->
-    <!--    <script src="//unpkg.com/element-plus"></script>-->
     <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <style type="text/css">
@@ -68,11 +62,11 @@
                     <el-submenu v-for="menu in menuList" :index="menu.path">
                         <template slot="title">
                             <i class="fa" :class="menu.icon"></i>
-                            {{menu.title}}
+                            {{menu.name}}
                         </template>
                         <template v-for="child in menu.children">
                             <el-menu-item :index="child.path">
-                                <a :href="child.linkUrl" target="right">{{child.title}}</a>
+                                <a :href="child.linkUrl" target="right">{{child.name}}</a>
                             </el-menu-item>
                         </template>
                     </el-submenu>
@@ -118,7 +112,6 @@
 <script src="../plugins/elementui/index.js"></script>
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script src="../js/axios.min.js"></script>
-<!--<script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
 <script>
     new Vue({
         el: '#app',
@@ -281,6 +274,12 @@
             axios.get('/user/getUsername').then((response) => {
                 if (response.data.flag) {
                     this.username = response.data.data;
+                }
+            });
+            //获取当前登陆的菜单权限
+            axios.get("/user/getAllMenus").then((res) => {
+                if (res.data.flag) {
+                    this.menuList = res.data.data;
                 }
             });
         },

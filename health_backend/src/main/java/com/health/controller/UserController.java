@@ -5,6 +5,7 @@ import com.health.constant.MessageConstant;
 import com.health.entity.PageResult;
 import com.health.entity.QueryPageBean;
 import com.health.entity.Result;
+import com.health.pojo.Menu;
 import com.health.pojo.Role;
 import com.health.pojo.User;
 import com.health.service.UserService;
@@ -15,8 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author LuoPing
@@ -42,7 +42,6 @@ public class UserController {
     public PageResult findPage(@RequestBody QueryPageBean queryPageBean){
         PageResult pageUser = userService.findPageUser(queryPageBean);
         log.info("查询成功，user: {}" , pageUser);
-
         return pageUser;
     }
     /**
@@ -72,6 +71,7 @@ public class UserController {
             return new Result(true, MessageConstant.GET_USER_FAIL,user);
         }catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false, MessageConstant.GET_USER_FAIL);
         }
     }
@@ -87,6 +87,7 @@ public class UserController {
             return new Result(true, MessageConstant.GET_ROLE_SUCCESS,roleIds);
         }catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false, MessageConstant.GET_ROLE_ERROR);
         }
     }
@@ -102,6 +103,7 @@ public class UserController {
             return new Result(true, MessageConstant.GET_USERNAME_SUCCESS,user.getUsername());
         }catch (Exception e){
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false,MessageConstant.GET_USERNAME_FAIL);
         }
     }
@@ -180,6 +182,7 @@ public class UserController {
             return new Result(true,MessageConstant.EDIT_USER_SUCCESS);
         }catch (Exception e){
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false,MessageConstant.DELETE_USER_FAIL);
         }
     }
@@ -211,14 +214,69 @@ public class UserController {
             return new Result(true,MessageConstant.EDIT_PASSWORD_SUCCESS);
         }catch(Exception e){
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false,MessageConstant.EDIT_PASSWORD_FAIL);
         }
     }
 
-//    public static void main(String[] args) {
-//        log.info("-----");
-//        log.warn("1111");
-//        log.error("2222");
-//        log.debug("3333");
-//    }
+    /**
+     * 获取登陆者的菜单权限
+     * @return
+     */
+    @GetMapping("getAllMenus")
+    public Result getAllMenus(){
+        try {
+            //获取当前登陆用户
+            org.springframework.security.core.userdetails.User loginUser = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (loginUser != null){
+                String loginUsername = loginUser.getUsername();
+                //根据用户名查询用户信息
+                User user = userService.findUserInfo(loginUsername);
+                user.setStation("1");
+                userService.update(user);//更新user的登陆状态
+                LinkedHashSet<Menu> menus = userService.getAllMenus(user.getId());
+                return new Result(true,MessageConstant.GET_MENU_SUCCESS,menus);
+            }
+            return new Result(false,MessageConstant.GET_USERNAME_FAIL);
+        }catch(Exception e){
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return new Result(false,MessageConstant.GET_MENU_FAIL);
+        }
+    }
+
+    public static void main(String[] args) {
+        LinkedList<String> linkedList = new LinkedList<>();
+        linkedList.add("hello");
+        linkedList.add("java");
+        linkedList.add("word");
+        linkedList.add("I");
+        linkedList.add("I");
+        linkedList.add("am");
+        System.out.println("linkedList="+linkedList);
+        LinkedHashSet<String> linkedHashSet = new LinkedHashSet<>();
+        linkedHashSet.add("hello");
+        linkedHashSet.add("java");
+        linkedHashSet.add("word");
+        linkedHashSet.add("I");
+        linkedHashSet.add("I");
+        linkedHashSet.add("am");
+        System.out.println("linkedHashSet="+linkedHashSet);
+        HashSet<String> hashSet = new HashSet<>();
+        hashSet.add("hello");
+        hashSet.add("java");
+        hashSet.add("word");
+        hashSet.add("I");
+        hashSet.add("I");
+        hashSet.add("am");
+        System.out.println("hashSet="+hashSet);
+        List<String> list = new ArrayList<>();
+        list.add("hello");
+        list.add("java");
+        list.add("word");
+        list.add("I");
+        list.add("I");
+        list.add("am");
+        System.out.println("list="+list);
+    }
 }

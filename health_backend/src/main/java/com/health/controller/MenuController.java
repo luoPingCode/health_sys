@@ -47,6 +47,7 @@ public class MenuController {
             return new Result(true,MessageConstant.GET_MENU_SUCCESS,allMenu);
         }catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false, MessageConstant.GET_MENU_FAIL);
         }
     }
@@ -69,12 +70,22 @@ public class MenuController {
             if (menuList != null && menuList.size() > 0) {
                 return new Result(false,MessageConstant.ADD_MENU_FAIL + "，菜单数据已存在");
             }
-
-            menuService.addMenu(menu);
-            log.info("id="+menu.getId());
-            return new Result(true,MessageConstant.ADD_MENU_SUCCESS);
+            //判断是否是一级、二级菜单
+            if(!menu.getPath().contains("/") && menu.getLinkUrl() == null && menu.getParentMenuId() == null){
+                menuService.addMenu(menu);
+                log.info("id="+menu.getId());
+                return new Result(true,MessageConstant.ADD_MENU_SUCCESS);
+            }
+            if (menu.getPath().contains("/") && menu.getLinkUrl() != null && menu.getParentMenuId() != null){
+                menuService.addMenu(menu);
+                log.info("id="+menu.getId());
+                return new Result(true,MessageConstant.ADD_MENU_SUCCESS);
+            }
+            //只有上面两种情况才能添加成功，否则添加失败
+            return new Result(false, MessageConstant.ADD_MENU_FAIL);
         }catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false, MessageConstant.ADD_MENU_FAIL);
         }
     }
@@ -92,10 +103,18 @@ public class MenuController {
                     menu.getPriority() == null && menu.getLevel() == null) {
                 return new Result(false,MessageConstant.EDIT_MENU_FAIL+"路径级别/菜单名称/优先级/菜单路径不能为空");
             }
-
-            return new Result(true,MessageConstant.EDIT_MENU_SUCCESS);
+            //判断是否是一级菜单，二级菜单
+            boolean flag1 = (menu.getLinkUrl() == null || menu.getLinkUrl().equals("")
+                    && menu.getParentMenuId() == null && !menu.getPath().contains("/"));
+            boolean flag2 = (menu.getLinkUrl() != null && menu.getLinkUrl().length() > 0
+                    && menu.getParentMenuId() != null && menu.getPath().contains("/"));
+            if(flag1 || flag2){//是否符合一级二级菜单
+                return menuService.edit(menu);
+            }
+            return new Result(false,MessageConstant.EDIT_MENU_FAIL + ",菜单格式有误");
         }catch (Exception e){
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false,MessageConstant.EDIT_MENU_FAIL);
         }
     }
@@ -115,6 +134,7 @@ public class MenuController {
             }
         }catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false, MessageConstant.GET_ROLE_ERROR);
         }
     }
@@ -128,14 +148,15 @@ public class MenuController {
     public Result deleteMenu(Integer id){
         try {
             //查询是否存在子菜单
-            int count = menuService.getChildren(id);
-            if (count > 0){
+            List<Menu> count = menuService.getChildren(id);
+            if (count != null && count.size() > 0){
                 return new Result(false, MessageConstant.DELETE_MENU_FAIL+",该菜单包含子菜单");
             }
             menuService.deleteMenu(id);
             return new Result(true,MessageConstant.DELETE_MENU_SUCCESS);
         }catch (Exception e){
             e.printStackTrace();
+            log.error(e.getMessage());
             return new Result(false, MessageConstant.DELETE_MENU_FAIL);
         }
     }
