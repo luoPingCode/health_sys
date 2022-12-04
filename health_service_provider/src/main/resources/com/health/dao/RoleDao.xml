@@ -3,14 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.health.dao.RoleDao">
-
     <resultMap id="BaseResultMap" type="com.health.pojo.Role">
         <id property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="keyword" column="keyword" jdbcType="VARCHAR"/>
         <result property="description" column="description" jdbcType="VARCHAR"/>
     </resultMap>
-<!--根据用户id获取用户角色-->
+    <!--根据用户id获取用户角色-->
     <resultMap id="findRolesMap"
                type="com.health.pojo.Role"
                extends="BaseResultMap">
@@ -20,7 +19,7 @@
                     select="com.health.dao.PermissionDao.findPermissionByRoleId">
         </collection>
     </resultMap>
-<!--    根据用户id获取角色-->
+    <!--    根据用户id获取角色-->
     <select id="findUserAndRole" parameterType="integer" resultMap="findRolesMap">
         SELECT id, name, keyword, description
         FROM t_role
@@ -31,11 +30,19 @@
         select r.id, r.name, r.description, r.keyword
         from t_role r
     </select>
-<!--    根据菜单id获取角色-->
+    <!--    根据菜单id获取角色-->
     <select id="getRoleById" resultMap="BaseResultMap">
         select r.id, r.name, r.description, r.keyword
         from t_role r
         where r.id in (SELECT role_id from t_role_menu where menu_id = #{id})
+    </select>
+    <!--    f分页查询-->
+    <select id="findPageRole" resultType="com.health.pojo.Role">
+        select id, name, keyword, description
+        from t_role
+        <if test="queryString != null and queryString.length > 0">
+            where name = #{queryString}
+        </if>
     </select>
     <!--    修改用户角色关联表-->
     <insert id="addUserAndRole">

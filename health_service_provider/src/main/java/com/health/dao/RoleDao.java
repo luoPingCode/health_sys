@@ -1,5 +1,6 @@
 package com.health.dao;
 
+import com.github.pagehelper.Page;
 import com.health.pojo.Role;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,4 +19,6 @@ public interface RoleDao {
     void addUserAndRole(HashMap<String, Integer> map);
 
     List<Role> getRoleById(@Param("id") Integer id);
+
+    Page<Role> findPageRole(@Param("queryString") String queryString);
 }
