@@ -60,9 +60,10 @@
         <property name="maxInMemorySize" value="4096" />
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
-    <!--aop注解扫描-->
-    <aop:aspectj-autoproxy proxy-target-class="true"/>
     <!--    导入Redis配置-->
     <import resource="spring-redis.xml"/>
     <import resource="spring-security.xml"/>
+
+    <!--aop注解扫描-->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 </beans>

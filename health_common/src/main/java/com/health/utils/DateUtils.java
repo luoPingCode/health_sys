@@ -42,7 +42,7 @@ public class DateUtils {
      * 日期转换 Date -> String
      *
      * @param date Date类型信息
-     * @return 字符串时间
+     * @return 字符串时间 yyyy-MM-dd
      * @throws Exception 抛出异常
      */
     public static String parseDate2String(Date date) throws Exception {
@@ -52,6 +52,19 @@ public class DateUtils {
         return parseDate2String(date, "yyyy-MM-dd");
     }
 
+    /**
+     * 日期转换 Date -> String
+     *
+     * @param date Date类型信息
+     * @return 字符串时间 yyyy-MM-dd HH:mm:ss
+     * @throws Exception 抛出异常
+     */
+    public static String parseDateString(Date date) throws Exception {
+        if (date == null) {
+            return null;
+        }
+        return parseDate2String(date, "yyyy-MM-dd HH:mm:ss");
+    }
     /**
      * 日期转换 Date -> String
      *

@@ -93,4 +93,6 @@ public class MessageConstant {
     public static final String DELETE_MENU_SUCCESS = "删除菜单数据成功";
     public static final String DELETE_MENU_FAIL = "删除菜单数据失败";
     public static final String GET_ROLE_ON = "没有关联的角色";
+    public static final String GET_ADDRESS_ERROR = "获取体检机构失败";
+    public static final String GET_ADDRESS_SUCCESS = "获取体检机构成功";
 }
