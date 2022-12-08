@@ -79,6 +79,7 @@ public class SysLogAspect {
         Syslog syslog = new Syslog();
         syslog.setId(uuid);
         syslog.setUsername(user.getUsername()); //后台操作人
+        syslog.setConsumerName(request.getServerName());//获取服务器名称
         syslog.setVisitTime(startTime);//开始时间
         syslog.setVisitTimestr(visitTimestr);//String 时间
         syslog.setIp(request.getRemoteAddr());//ip

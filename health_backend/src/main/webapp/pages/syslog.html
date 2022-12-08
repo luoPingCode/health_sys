@@ -47,10 +47,13 @@
                 <el-table-column prop="url" label="路径名" align="center"></el-table-column>
                 <el-table-column prop="executionTime" label="执行时间/ms" align="center"></el-table-column>
                 <el-table-column prop="method" label="方法" align="center"></el-table-column>
-                <el-table-column prop="visitTime" label="访问时间" align="center"></el-table-column>
+                <el-table-column prop="visitTimestr" label="访问时间" align="center"></el-table-column>
+                <el-table-column label="操作" align="center">
+                    <template slot-scope="scope">
+                        <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+                    </template>
                 </el-table-column>
             </el-table>
-
             <div class="pagination-container">
                 <el-pagination
                         class="pagiantion"
@@ -69,8 +72,7 @@
 <script src="../js/vue.js"></script>
 <script src="../plugins/elementui/index.js"></script>
 <script type="text/javascript" src="../js/jquery.min.js"></script>
-<script src="../js/axios-0.18.0.js"></script>
-
+<script src="../js/axios.min.js"></script>
 <script>
     var vue = new Vue({
         el: '#app',
@@ -82,15 +84,17 @@
                 queryString: null//查询条件
             },
             dataList: [{
-                id: 1, consumerName: 110,
-                username: 120, ip: 159,
-                url: 123, executionTime: 110,
-                method: "123", visitTime: 2020 - 9 - 3
-
+                id: 1,
+                consumerName: 110,
+                username: 120,
+                ip: 159,
+                url: 123,
+                executionTime: 110,
+                method: "123",
+                visitTimestr: 2020 - 9 - 3
             }],//当前页要展示的分页列表数据
             checkIds: [],
             multipleSelection: []
-
         },
         //钩子函数，VUE对象初始化完成后自动执行
         created() {
@@ -99,18 +103,18 @@
         methods: {
             //分页查询
             findPage() {
-                var param = {
+                let param = {
                     pageSize: this.pagination.pageSize,
                     currentPage: this.pagination.currentPage,
                     queryString: this.pagination.queryString
                 };
-                axios.post("/spuLog/findAll.do", param).then((res) => {
+                axios.post("/sysLog/findAll", param).then((res) => {
                     this.pagination.total = res.data.total;
                     this.dataList = res.data.rows;
                 })
 
             },
-
+            // 取消所有
             toggleSelection(rows) {
                 this.checkIds = [];
                 if (rows) {
@@ -122,8 +126,8 @@
                 }
                // alert(this.checkIds)
             },
+            // 全选所有
             handleSelectionChange(selection) {
-
                 this.multipleSelection = selection;
               // alert(this.multipleSelection)
                 this.checkIds=[];
@@ -132,13 +136,6 @@
                 }
 
             },
-
-
-
-
-
-
-
             //切换页码
             handleCurrentChange(currentPage) {
                 this.pagination.currentPage = currentPage;
@@ -147,7 +144,6 @@
             //删除所有
             delArray() {
                 /*this.dataList = this.multipleSelection;
-
                 alert(JSON.stringify(this.dataList));*/
                 // alert(this.checkIds)
                 this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
@@ -155,9 +151,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-
-
-                    axios.post("/spuLog/deleteByIds.do?",this.checkIds).then((res) => {
+                    axios.post("/sysLog/deleteByIds",this.checkIds).then((res) => {
                         if (res.data.flag) {
                             this.$message({
                                 message: res.data.message,
@@ -172,7 +166,6 @@
                     })
                 }).catch(() => {
                     this.$message({
-
                         type: 'info',
                         message: '已取消删除'
                     });
@@ -181,14 +174,14 @@
             },
             // 删除
             handleDelete(row) {
-                alert(JSON.stringify(row));
-                alert(row.id);
+                // alert(JSON.stringify(row));
+                // alert(row.id);
                 this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    axios.get("/syslog/deleteById.do?id=" + row.id).then((res) => {
+                    axios.delete("/sysLog/deleteById?id=" + row.id).then((res) => {
                         if (res.data.flag) {
                             this.$message({
                                 message: res.data.message,
@@ -207,9 +200,18 @@
                         message: '已取消删除'
                     });
                 });
-            }
+            },
+            showMessage(r) {
+                if (r === 'Error: Request failed with status code 403') {
+                    //权限不足
+                    this.$message.error('无访问权限');
+                    return;
+                } else {
+                    this.$message.error('未知错误');
+                    return;
+                }
+            },
         },
-
     })
 </script>
 </html>

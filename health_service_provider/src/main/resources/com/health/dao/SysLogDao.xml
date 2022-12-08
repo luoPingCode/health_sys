@@ -3,10 +3,34 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.health.dao.SysLogDao">
+
+    <resultMap id="BaseResultMap" type="com.health.pojo.Syslog">
+        <id column="id" property="id"/>
+        <result property="username" column="username"/>
+        <result property="consumerName" column="consumerName"/>
+        <result property="executionTime" column="executionTime"/>
+        <result property="visitTime" column="visitTime"/>
+        <result property="visitTimestr" column="visit_timestr"/>
+        <result property="ip" column="ip"/>
+        <result property="url" column="url"/>
+        <result property="method" column="method"/>
+    </resultMap>
     <!--    插入日志-->
     <insert id="insert">
         insert into t_syslog(id, username, consumerName, visitTime, visit_timestr, ip, url, executionTime, method)
         VALUES (#{id}, #{username}, #{consumerName}, #{visitTime}, #{visitTimestr}, #{ip}, #{url}, #{executionTime},
                 #{method})
     </insert>
+<!--    删除日志-->
+    <delete id="deleteById" parameterType="string">
+        delete from t_syslog where id = #{id}
+    </delete>
+    <!--    分页查询日志-->
+    <select id="findAll" parameterType="string" resultMap="BaseResultMap">
+        select id, username, consumerName, visitTime, visit_timestr, ip, url, executionTime, method from t_syslog
+        <if test="queryString != null and queryString.length > 0">
+            where username = #{queryString}
+        </if>
+        ORDER BY visit_timestr desc
+    </select>
 </mapper>

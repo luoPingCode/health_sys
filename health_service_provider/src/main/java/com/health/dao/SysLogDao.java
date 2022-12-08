@@ -1,6 +1,8 @@
 package com.health.dao;
 
+import com.github.pagehelper.Page;
 import com.health.pojo.Syslog;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 日志数据操作层
@@ -11,4 +13,8 @@ import com.health.pojo.Syslog;
  */
 public interface SysLogDao {
     void insert(Syslog sysLog);
+
+    Page<Syslog> findAll(@Param("queryString") String queryString);
+
+    void deleteById(@Param("id") String id);
 }
