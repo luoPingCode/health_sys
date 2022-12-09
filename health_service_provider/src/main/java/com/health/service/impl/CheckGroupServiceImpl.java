@@ -54,7 +54,7 @@ public class CheckGroupServiceImpl implements CheckGroupService {
         //使用pageHelper进行分页
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         Page<CheckGroup> checkGroupList = checkGroupDao.findCheckGroupList(queryPageBean.getQueryString());
-        return new PageResult(checkGroupList.getTotal(),checkGroupList);
+        return new PageResult(checkGroupList.getTotal(),checkGroupList.getResult());
     }
 
     /**

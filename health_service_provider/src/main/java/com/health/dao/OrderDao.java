@@ -1,8 +1,11 @@
 package com.health.dao;
 
+import com.github.pagehelper.Page;
+import com.health.entity.Conditions;
 import com.health.pojo.Order;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -20,4 +23,6 @@ public interface OrderDao {
     int getCountByDay(@Param("today") String today, @Param("orderStatus")String orderStatus);
 
     int getCountByThisWeek(@Param("thisWeekMonday") String thisWeekMonday, @Param("orderStatus")String orderStatus);
+
+    Page<Order> findByPageAndCondition(Map<String, Object> map);
 }

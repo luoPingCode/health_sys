@@ -1,6 +1,7 @@
 package com.health.dao;
 
 
+import com.github.pagehelper.Page;
 import com.health.pojo.Member;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,4 +23,6 @@ public interface MemberDao {
     int getCountByThisWeek(@Param("thisWeekMonday") String thisWeekMonday);
 
     Member getMemberByCondition(@Param("healthmanager") String healthmanager);
+
+    Page<Member> findPage(String queryString);
 }

@@ -38,32 +38,37 @@
         from t_member
         where regTime &lt; #{month}
     </select>
-<!--    获取当天新增会员数-->
+    <!--    获取当天新增会员数-->
     <select id="getCountByDay" resultType="java.lang.Integer">
-        select count(1) from t_member where regTime = #{today}
+        select count(1)
+        from t_member
+        where regTime = #{today}
     </select>
-<!--    获取所有会员-->
+    <!--    获取所有会员-->
     <select id="getCountAll" resultType="java.lang.Integer">
-        select count(1) from t_member
+        select count(1)
+        from t_member
     </select>
-<!--    获取本周\本月新增会员-->
+    <!--    获取本周\本月新增会员-->
     <select id="getCountByThisWeek" resultType="java.lang.Integer">
-        select count(1) from t_member where regTime &gt;= #{thisWeekMonday}
+        select count(1)
+        from t_member
+        where regTime &gt;= #{thisWeekMonday}
     </select>
-<!--    根据条件查询member-->
+    <!--    根据条件查询member-->
     <select id="getMemberByCondition" resultType="com.health.pojo.Member">
         select id,
-               fileNumber,
-               name,
-               sex,
-               idCard,
-               phoneNumber,
-               regTime,
-               password,
-               email,
-               birthday,
-               remark,
-               healthmanager
+        fileNumber,
+        name,
+        sex,
+        idCard,
+        phoneNumber,
+        regTime,
+        password,
+        email,
+        birthday,
+        remark,
+        healthmanager
         from t_member
         <where>
             <if test="id != null">
@@ -76,6 +81,15 @@
                 and healthmanager = #{healthmanager}
             </if>
         </where>
+    </select>
+    <!--    分页查询-->
+    <select id="findPage" resultType="com.health.pojo.Member">
+        select id, fileNumber, name, sex, idCard, phoneNumber, regTime, password, email, birthday, remark, healthmanager from t_member
+        <if test="queryString != null and queryString.length > 0">
+            where name = #{queryString} or
+                  fileNumber = #{queryString} or
+                  phoneNumber = #{queryString}
+        </if>
     </select>
 
 </mapper>

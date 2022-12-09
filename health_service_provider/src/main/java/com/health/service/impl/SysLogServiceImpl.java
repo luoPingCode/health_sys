@@ -8,6 +8,7 @@ import com.health.entity.PageResult;
 import com.health.entity.QueryPageBean;
 import com.health.pojo.Syslog;
 import com.health.service.SysLogService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
  * @Date 2022/12/5 22:09
  */
 @Service(interfaceClass = SysLogService.class)
+@Slf4j
 public class SysLogServiceImpl implements SysLogService {
     @Autowired
     SysLogDao sysLogDao;
@@ -39,7 +41,8 @@ public class SysLogServiceImpl implements SysLogService {
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         //分页查询
         Page<Syslog> syslogPage = sysLogDao.findAll(queryPageBean.getQueryString());
-        return new PageResult(syslogPage.getTotal(),syslogPage);
+        log.info("syslogPage------------"+syslogPage.toString());
+        return new PageResult(syslogPage.getTotal(),syslogPage.getResult());
     }
 
     /**

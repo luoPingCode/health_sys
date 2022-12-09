@@ -30,4 +30,6 @@ public interface UserDao {
     void clear(@Param("id") Integer id);
 
     void deleteUser(Integer id);
+
+    List<String> getHealthManager(String name);
 }

@@ -36,7 +36,7 @@ public class PermissionServiceImpl implements PermissionService {
         //pageHelper分页
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         Page<Permission> permissions = permissionDao.queryByPage(queryPageBean.getQueryString());
-        return new PageResult(permissions.getTotal(),permissions);
+        return new PageResult(permissions.getTotal(),permissions.getResult());
     }
 
     /**

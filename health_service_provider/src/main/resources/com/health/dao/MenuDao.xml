@@ -80,7 +80,7 @@
                        WHERE rm.role_id IN (SELECT ur.role_id FROM t_user_role ur WHERE ur.user_id = #{id}))
           AND m.linkUrl IS NULL
           AND m.parentMenuId IS NULL
-        ORDER BY m.priority
+        ORDER BY m.priority,m.path
     </select>
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">

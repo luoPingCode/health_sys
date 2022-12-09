@@ -31,6 +31,6 @@ public class RoleServiceImpl implements RoleService {
         //使用pageHelper进行分页
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         Page<Role> pageRole = roleDao.findPageRole(queryPageBean.getQueryString());
-        return new PageResult(pageRole.getTotal(),pageRole);
+        return new PageResult(pageRole.getTotal(),pageRole.getResult());
     }
 }

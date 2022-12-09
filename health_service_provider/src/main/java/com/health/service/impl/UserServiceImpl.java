@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         //执行dao方法,返回分页数
         Page<User> pageUser = userDao.findPageUser(queryPageBean.getQueryString());
-        return new PageResult(pageUser.getTotal(), pageUser);
+        return new PageResult(pageUser.getTotal(), pageUser.getResult());
     }
 
     /**

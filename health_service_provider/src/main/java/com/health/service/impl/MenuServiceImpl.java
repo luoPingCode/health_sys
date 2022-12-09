@@ -40,7 +40,7 @@ public class MenuServiceImpl implements MenuService {
         //pageHelper分页
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         Page<Menu> menuPage = menuDao.findPage(queryPageBean.getQueryString());
-        return new PageResult(menuPage.getTotal(),menuPage);
+        return new PageResult(menuPage.getTotal(),menuPage.getResult());
     }
 
     /**

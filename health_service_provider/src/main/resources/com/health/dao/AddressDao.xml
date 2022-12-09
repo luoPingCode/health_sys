@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.dao.AddressDao">
+<!--    获取所有体检机构-->
+    <select id="findAll" resultType="com.health.pojo.Address">
+        select id, addressName, telephone, lngAndLat, img, map, detailaddress
+        from t_address;
+    </select>
+</mapper>

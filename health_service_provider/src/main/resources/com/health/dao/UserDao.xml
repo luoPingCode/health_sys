@@ -76,6 +76,12 @@
     <select id="findRoleById" parameterType="integer" resultType="integer">
         select role_id from t_user_role WHERE user_id = #{id}
     </select>
+
+    <select id="getHealthManager" resultType="java.lang.String">
+        SELECT username
+        FROM t_user
+        WHERE id IN (SELECT user_id FROM t_user_role WHERE role_id IN (SELECT id FROM t_role WHERE name = #{name}))
+    </select>
     <!--    修改用户信息-->
     <update id="updateUser" parameterType="com.health.pojo.User">
         update t_user u

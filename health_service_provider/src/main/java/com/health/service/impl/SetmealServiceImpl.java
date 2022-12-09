@@ -130,11 +130,11 @@ public class SetmealServiceImpl implements SetmealService {
 //        使用pageHelper进行分页
         PageHelper.startPage(queryPageBean.getCurrentPage(),queryPageBean.getPageSize());
         //查询套餐总数
-        long total = setmealDao.findCount();
+//        long total = setmealDao.findCount();
 //        查询分页套餐数据
         Page<Setmeal> serMealList = setmealDao.findSerMeal(queryPageBean.getQueryString());
         //返回分页查询套餐
-        return new PageResult(total,serMealList);
+        return new PageResult(serMealList.getTotal(),serMealList.getResult());
     }
 
     /**

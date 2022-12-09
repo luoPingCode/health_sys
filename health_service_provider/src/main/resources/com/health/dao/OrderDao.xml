@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.health.dao.OrderDao">
+
+    <resultMap id="baseResultMap" type="com.health.pojo.Order">
+        <id column="id" property="id"/>
+        <result column="member_id" property="memberId"/>
+        <result column="orderDate" property="orderDate"/>
+        <result column="orderType" property="orderType"/>
+        <result column="orderStatus" property="orderStatus"/>
+        <result column="setmeal_id" property="setmealId"/>
+    </resultMap>
     <!--    进行预约-->
     <insert id="addOrder" parameterType="com.health.pojo.Order">
         <!--通过mybatis框架提供的selectKey标签获得自增产生的ID值-->
@@ -42,17 +51,57 @@
         SELECT COUNT(1)
         FROM t_order
         WHERE orderDate = #{today}
-          <if test="orderStatus != null">
-              AND orderStatus = #{orderStatus}
-          </if>
+        <if test="orderStatus != null">
+            AND orderStatus = #{orderStatus}
+        </if>
     </select>
-<!--    获取某星期预约运营数-->
+    <!--    获取某星期预约运营数-->
     <select id="getCountByThisWeek" parameterType="string" resultType="java.lang.Integer">
         SELECT COUNT(1)
         FROM t_order
         WHERE orderDate &gt;= #{thisWeekMonday}
         <if test="orderStatus != null">
             AND orderStatus = #{orderStatus}
+        </if>
+    </select>
+    <!--    分页条件映射查询-->
+    <resultMap id="ResultMap" type="com.health.pojo.Order" extends="baseResultMap">
+        <association property="member" javaType="com.health.pojo.Member">
+            <result column="memberName" property="name"/>
+            <result property="phoneNumber" column="phoneNumber"/>
+        </association>
+        <association property="setmeal" javaType="com.health.pojo.Setmeal">
+            <result column="setmealName" property="name"/>
+        </association>
+    </resultMap>
+    <!--    分页条件查询-->
+    <select id="findByPageAndCondition" resultMap="ResultMap">
+        SELECT
+        m.name memberName,
+        m.phoneNumber,
+        o.orderDate,
+        o.orderType,
+        o.orderStatus,
+        s.name setmealName
+        FROM
+        t_order o,
+        t_member m,
+        t_setmeal s
+        WHERE
+        o.member_id = m.id
+        AND o.setmeal_id = s.id
+        <if test="queryOrderStatus != null and queryOrderStatus.length > 0">
+            and o.orderStatus = #{queryOrderStatus}
+        </if>
+        <if test="queryOrderType != null and queryOrderType.length > 0">
+            and o.orderType = #{queryOrderType}
+        </if>
+        <if test="queryString != null and queryString.length > 0">
+            and (m.name like "%"#{queryString}"%" or
+            m.phoneNumber like "%"#{queryString}"%")
+        </if>
+        <if test="startDate != null and endDate != null">
+            and orderDate between #{startDate} and #{endDate}
         </if>
     </select>
 </mapper>

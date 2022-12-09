@@ -1,25 +1,30 @@
 package com.health.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.health.constant.MessageConstant;
 import com.health.constant.RedisMessageConstant;
 import com.health.dao.MemberDao;
 import com.health.dao.OrderDao;
 import com.health.dao.OrderSettingDao;
+import com.health.entity.Conditions;
+import com.health.entity.PageResult;
 import com.health.entity.Result;
 import com.health.pojo.Member;
 import com.health.pojo.Order;
 import com.health.pojo.OrderSetting;
 import com.health.service.OrderService;
 import com.health.utils.DateUtils;
+import com.health.utils.IdCardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.JedisPool;
-
-import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 订单预约业务处理
  * @author LuoPing
  * @date 2022/11/9 21:47
  */
@@ -98,12 +103,20 @@ public class OrderServiceImpl implements OrderService {
             String sex = map.get("sex");
 //            String telephone1 = map.get("telephone");
             String idCard = map.get("idCard");
+            String birthDay = IdCardUtils.getBirthDayFromIdCard(idCard);
+            Date birthDate = null;
+            try {
+                birthDate = DateUtils.parseString2Date(birthDay);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (name != null && sex != null && idCard != null){
                 member = new Member();
                 member.setName(name);
                 member.setSex(sex);
                 member.setIdCard(idCard);
                 member.setRegTime(date);
+                member.setBirthday(birthDate);
                 memberDao.addMember(member);//进行注册
                 //进行预约
                 Integer newMemberId = member.getId();//获取会员id
@@ -128,12 +141,42 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 查询预约信息
      * @param id
-     * @return
+     * @return order
      */
     @Override
     public Map<String, String> findById(Integer id) {
         Map<String, String> order = orderDao.getOrderById(id);
         return order;
+    }
+
+    /**
+     * 分页条件查询
+     * @param conditions
+     * @return
+     */
+    @Override
+    public PageResult findByPageAndCondition(Conditions conditions) {
+        Date[] queryDate = conditions.getQueryDate();
+        String queryOrderStatus = conditions.getQueryOrderStatus();
+        String queryOrderType = conditions.getQueryOrderType();
+        String queryString = conditions.getQueryString();
+        Date startDate = null;
+        Date endDate = null;
+        //判断查询时间是否不为空
+        if (queryDate != null && queryDate.length > 0){
+            startDate = queryDate[0];
+            endDate = queryDate[1];
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("queryOrderStatus",queryOrderStatus);
+        map.put("queryOrderType",queryOrderType);
+        map.put("queryString",queryString);
+        map.put("startDate",startDate);
+        map.put("endDate",endDate);
+        //使用pageHelper分页
+        PageHelper.startPage(conditions.getCurrentPage(), conditions.getPageSize());
+        Page<Order> orderPage = orderDao.findByPageAndCondition(map);
+        return new PageResult(orderPage.getTotal(),orderPage.getResult());
     }
 
 }
