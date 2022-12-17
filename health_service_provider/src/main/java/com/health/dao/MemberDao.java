@@ -5,6 +5,9 @@ import com.github.pagehelper.Page;
 import com.health.pojo.Member;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Map;
+
 /**
 * @Entity com.health.domain.Member
 */
@@ -24,5 +27,7 @@ public interface MemberDao {
 
     Member getMemberByCondition(@Param("healthmanager") String healthmanager);
 
-    Page<Member> findPage(String queryString);
+    Page<Member> findPage(@Param("queryString") String queryString);
+
+    List<Map<String, String>> getMemberOtherData(Integer id);
 }

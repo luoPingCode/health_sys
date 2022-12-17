@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("order")
-public class orderController {
+public class OrderController {
 
     @Reference
     OrderService orderService;

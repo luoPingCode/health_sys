@@ -95,4 +95,8 @@ public class MessageConstant {
     public static final String GET_ROLE_ON = "没有关联的角色";
     public static final String GET_ADDRESS_ERROR = "获取体检机构失败";
     public static final String GET_ADDRESS_SUCCESS = "获取体检机构成功";
+    public static final String DELETE_SYSLOG_ERROR = "删除日志数据失败";
+    public static final String DELETE_SYSLOG_SUCCESS = "删除日志数据成功";
+    public static final String EXPORT_MEMBER_ERROR = "导出会员数据失败";
+    public static final String EXPORT_MEMBER_SUCCESS = "导出会员数据成功";
 }

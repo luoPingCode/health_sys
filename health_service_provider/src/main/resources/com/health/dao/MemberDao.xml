@@ -91,5 +91,23 @@
                   phoneNumber = #{queryString}
         </if>
     </select>
+    <select id="getMemberOtherData" resultType="java.util.Map">
+        SELECT
+            s.`name` setmealName,
+            a.addressName,
+            c.`name` checkgroupName,
+            i.`name` checkitemName
+        FROM
+            t_setmeal s
+                LEFT join t_setmeal_checkgroup sc on sc.setmeal_id = s.id
+                LEFT JOIN t_checkgroup c ON c.id = sc.checkgroup_id
+                LEFT JOIN t_checkgroup_checkitem cc ON cc.checkgroup_id = c.id
+                LEFT JOIN t_checkitem i ON i.id = cc.checkitem_id
+                LEFT JOIN t_order o ON o.setmeal_id = s.id
+                LEFT JOIN t_member m ON m.id = o.member_id
+                LEFT JOIN t_address a ON a.id = o.address_id
+        WHERE
+            m.id = #{id}
+    </select>
 
 </mapper>
