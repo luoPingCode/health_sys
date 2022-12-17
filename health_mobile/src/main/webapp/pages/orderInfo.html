@@ -21,7 +21,7 @@
     <script>
         var id = getUrlParam("id");
     </script>
-    <script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=98XNslGfUeI2OoqQTAn7m6oy2BVgVDdQ"></script>
+    <script type="text/javascript" src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=y6Oti3FykE3ADZzEBjQQciVgBy5WoRNg"></script>
 </head>
 <body data-spy="scroll" data-target="#myNavbar" data-offset="150">
 <div id="app" class="app">
@@ -187,7 +187,6 @@
                     return;*/
                     $("#showMap").show();    //包含地图的div快展示
                     $("#map").show();    //显示地图
-
                     //百度地图api,创建地图
                     let map = new BMap.Map("map");
                     let point = new BMap.Point(this.lng, this.lat);

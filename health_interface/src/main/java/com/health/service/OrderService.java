@@ -1,5 +1,7 @@
 package com.health.service;
 
+import com.health.entity.Conditions;
+import com.health.entity.PageResult;
 import com.health.entity.Result;
 import com.health.pojo.Order;
 
@@ -15,4 +17,5 @@ public interface OrderService {
 
     Map<String, String> findById(Integer id);
 
+    PageResult findByPageAndCondition(Conditions conditions);
 }
