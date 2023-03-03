@@ -11,6 +11,8 @@ import java.util.Date;
 public class CalendarTest {
     @Test
     public void calendarTest() {
+        Date date = new Date();
+        System.out.println(date);
         Date today = DateUtils.getToday();
         Calendar calendar = Calendar.getInstance();
         System.out.println(calendar);

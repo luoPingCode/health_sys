@@ -52,7 +52,7 @@ public class SysLogAspect {
 
     /**
      * 方法执行结束通知
-     * @param joinPoint
+     * @param joinPoint 切入点
      */
     @After("execution(* com.health.controller.*.*(..))")
     public void afterAdvice(JoinPoint joinPoint) throws Exception {

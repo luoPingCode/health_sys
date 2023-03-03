@@ -7,13 +7,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="health_mobile" />
-        <module name="health_service_provider" />
-        <module name="health_jobs" />
-        <module name="health_interface" />
-        <module name="health_backend" />
-        <module name="health_common" />
         <module name="springsecurityDemo" />
+        <module name="health_interface" />
+        <module name="health_service_provider" />
+        <module name="health_backend" />
+        <module name="health_mobile" />
+        <module name="health_common" />
+        <module name="health_jobs" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="12">

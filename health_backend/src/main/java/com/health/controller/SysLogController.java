@@ -45,6 +45,7 @@ public class SysLogController {
         try {
             sysLogService.deleteByIds(ids);
             return new Result(true,MessageConstant.DELETE_SYSLOG_SUCCESS);
+            
         }catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
